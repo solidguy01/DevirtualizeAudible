@@ -1,6 +1,7 @@
 # DevirtualizeAudible
 
-A browser extension to filter out "Virtual Voice" narrations from Audible search results.
+A browser extension that removes AI-narrated titles (Virtual Voice, AI Voice, voice replica and similar) from Audible
+result listings.
 
 ## Description
 
@@ -12,10 +13,10 @@ actual audiobooks amongst the growing virtual horde.
 
 ## Features
 
-* Removes titles narrated by "Virtual Voice", "AI Voice", "AI Narrator", "Synthesized Voice" or "&lt;name&gt;'s voice
-  replica" from any audible.com page that shows result cards: search (`/search`, including category listings at
-  `/search?node=...`), new releases (`/newreleases`) and bestsellers (`/charts/best`). See
-  [docs/01-page-coverage.md](docs/01-page-coverage.md).
+* Removes titles narrated by "Virtual Voice", "AI Voice", "AI Narrator", "Synthesized Voice" or `<name>'s voice
+  replica` from any audible.com page that shows result cards: search (`/search`, including category listings at
+  `/search?node=...`), new releases (`/newreleases`), bestsellers (`/charts/best`) and series pages (`/series/...`).
+  See [docs/01-page-coverage.md](docs/01-page-coverage.md).
 * Shows a single "N VIRTUAL VOICE TITLE(S) REMOVED BY DEVIRTUALIZER" line under the result count, and keeps it up to
   date if Audible loads more results in place.
 * Advanced search (`/advsr`): adds an "Exclude AI-narrated titles" checkbox (checked by default) under the Keyword
@@ -27,19 +28,20 @@ actual audiobooks amongst the growing virtual horde.
 
 ## Install unpacked
 
-Build the extension (see BUILD/TEST below) or extract a zip from `downloads/`, then:
+Version 1.1.0 is not on the browser stores. Build it (see BUILD/TEST below) or extract a zip from `downloads/` into a
+folder that will stay in place, then:
 
 * Chrome/Edge: open `chrome://extensions` (or `edge://extensions`), enable "Developer mode", click "Load unpacked"
-  and select the `dist/chrome` folder.
+  and select `dist/chrome` or the folder you extracted the Chrome zip into.
 * Firefox: open `about:debugging`, click "This Firefox", click "Load Temporary Add-on" and select
-  `dist/firefox/manifest.json`. Temporary add-ons are removed when Firefox restarts.
+  `dist/firefox/manifest.json` or the Firefox zip. Temporary add-ons are removed when Firefox restarts.
 
 ## Motivation
 
 At the time of this writing (March 2024) here is the sad state of affairs when trying to actually find an audiobook narrated by a human:
 
 * Of the latest 100 new titles in science fiction and fantasy, only 11 are narrated by actual human beings
-* Of the latest 100 new titles in mystery and trillers, only 17 are narrated by actual human beings
+* Of the latest 100 new titles in mystery and thrillers, only 17 are narrated by actual human beings
 * Of the latest 100 new titles in romance, only 19 are narrated by actual human beings
 * Of the latest 100 new titles in genre fiction, only 15 are narrated by actual human beings
 * Of the latest **200** new titles in literature and fiction, only 27 (out of **200**) are narrated by actual human beings
@@ -53,7 +55,7 @@ Cheers and happy listening.
 Before installing the add-on: a search listings page which has "Virtual Voice" "narrations" burying any actual
 audiobooks:
 
-![Before installing the add-on: a search listings page which as "Virtual Voice" "narrations" burying any actual audiobooks.](screenshots/Screenshot%202024-03-07%20at%2012-54-58%20Science%20Fiction%20&%20Fantasy%20Audiobooks%20in%20English%20Audible.com%201280x800.png)
+![Before installing the add-on: a search listings page which has "Virtual Voice" "narrations" burying any actual audiobooks.](screenshots/Screenshot%202024-03-07%20at%2012-54-58%20Science%20Fiction%20&%20Fantasy%20Audiobooks%20in%20English%20Audible.com%201280x800.png)
 
 After installing the add-on: a search listings page where you can see the (1) actual human-narrated title, and the
 removal message to let you know the search results have been filtered:
@@ -63,6 +65,8 @@ removal message to let you know the search results have been filtered:
 (Note that since version 1.0.2 the message includes the *number* of titles that have been filtered, too.)
 
 ## LINKS
+
+The store listings are the upstream releases (1.0.4). Version 1.1.0 of this fork is only available unpacked.
 
 FIREFOX: (1.0.4 published) https://addons.mozilla.org/en-US/firefox/addon/devirtualizeaudible/
 
@@ -84,20 +88,20 @@ CHROME/EDGE: (1.0.4 published) [https://chromewebstore.google.com/detail/fegkpnd
 
 ```
 mkdir -p dist
-cp -R src/firefox/ dist
+cp -R src/firefox dist/
 cp -R src/common/* dist/firefox
-bsdtar -a -cvf dist/firefox.zip LICENSE PRIVACY -C `pwd`/dist/firefox/ js icons manifest.json
+bsdtar -a -cvf dist/firefox.zip LICENSE PRIVACY -C dist/firefox js icons manifest.json
 ```
 
-Download at [downloads/DevirtualizeAudible-ff-1.1.0.zip](downloads/DevirtualizeAudible-ff-1.1.0.zip) to try out in Developer mode. For Firefox, this means navigating to "about:debugging", clicking "This Firefox", and clicking "Load Temporary Add-on". (This has to be repeated each restart of Firefox until you download it from the official marketplace.)
+Prebuilt: [downloads/DevirtualizeAudible-ff-1.1.0.zip](downloads/DevirtualizeAudible-ff-1.1.0.zip). See "Install unpacked" above.
 
 ### Chrome/Edge
 
 ```
 mkdir -p dist
-cp -R src/chrome/ dist
+cp -R src/chrome dist/
 cp -R src/common/* dist/chrome
-bsdtar -a -cvf dist/chrome.zip LICENSE PRIVACY -C `pwd`/dist/chrome/ js icons html manifest.json
+bsdtar -a -cvf dist/chrome.zip LICENSE PRIVACY -C dist/chrome js icons html manifest.json
 ```
 
-Download at [downloads/DevirtualizeAudible-chrome-1.1.0.zip](downloads/DevirtualizeAudible-chrome-1.1.0.zip) to try out in Developer mode. For Edge, this means extracting the ZIP to a folder, navigating to "edge://extensions", selecting the "Developer mode" slider, and clicking "Load unpacked" and selecting the folder containing the extension files. (This will generate a warning on each restart of Edge until you can download it from the official marketplace.)
+Prebuilt: [downloads/DevirtualizeAudible-chrome-1.1.0.zip](downloads/DevirtualizeAudible-chrome-1.1.0.zip). See "Install unpacked" above.

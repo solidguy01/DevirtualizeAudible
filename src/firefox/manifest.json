@@ -3,7 +3,7 @@
   "name": "DevirtualizeAudible",
   "version": "1.1.0",
 
-  "description": "Removes AI-narrated titles (Virtual Voice, AI Voice, voice replica) from Audible listings.",
+  "description": "Removes AI-narrated titles (Virtual Voice, AI Voice, voice replica and similar) from Audible listings.",
 
   "icons": {
     "48": "icons/Devirtualizer.png"

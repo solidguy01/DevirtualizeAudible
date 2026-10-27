@@ -2,7 +2,7 @@
 
 (() => {
   // ?devirtualize=no disables the extension for that page load
-  if (new URL(document.URL).searchParams.get('devirtualize') === 'no') {
+  if (new URLSearchParams(location.search).get('devirtualize') === 'no') {
     return;
   }
 
@@ -18,19 +18,12 @@
   // Search term that makes Audible exclude synthetic narrations server-side
   const EXCLUDE_TERM = '-virtual_voice';
   const PREF_KEY = 'devirtualizer.excludeAiNarrated';
-  const MARK = 'devirtualizer';
   const SUMMARY_ID = 'devirtualizer-summary';
   const CHECKBOX_ID = 'devirtualizer-exclude';
   // Fallback depth from .narratorLabel to its result card (Audible DOM, Oct 2026)
   const CARD_DEPTH = 9;
 
   let titlesRemoved = 0;
-
-  function isAiNarrated(label) {
-    const text = label.textContent.replace(/\s+/g, ' ').trim();
-    const match = text.match(/^Narrated by:\s*(.*)$/i);
-    return Boolean(match) && AI_NARRATOR_PATTERNS.some((re) => re.test(match[1]));
-  }
 
   function findCard(label) {
     let card = label.closest('li.productListItem');
@@ -40,7 +33,7 @@
         card = card.parentElement;
       }
     }
-    return card && card.parentElement && card.parentElement.nodeName === 'UL' ? card : null;
+    return card?.nodeName === 'LI' && card.parentElement?.nodeName === 'UL' ? card : null;
   }
 
   function updateSummary() {
@@ -70,14 +63,19 @@
   function filterResults() {
     for (const label of document.querySelectorAll('.narratorLabel')) {
       const card = findCard(label);
-      if (!card || card.dataset[MARK]) {
+      if (!card || card.dataset.devirtualizer) {
         continue;
       }
-      if (isAiNarrated(label)) {
+      const match = label.textContent.replace(/\s+/g, ' ').trim().match(/^Narrated by:\s*(.*)/i);
+      if (!match) {
+        // Label not rendered yet; check again on the next run
+        continue;
+      }
+      if (AI_NARRATOR_PATTERNS.some((re) => re.test(match[1]))) {
         card.remove();
         titlesRemoved++;
       } else {
-        card.dataset[MARK] = 'kept';
+        card.dataset.devirtualizer = 'kept';
       }
     }
     updateSummary();
@@ -86,7 +84,7 @@
   function readPref() {
     try {
       return localStorage.getItem(PREF_KEY) !== 'false';
-    } catch (e) {
+    } catch {
       return true;
     }
   }
@@ -94,14 +92,14 @@
   function writePref(value) {
     try {
       localStorage.setItem(PREF_KEY, String(value));
-    } catch (e) {
+    } catch {
       // Storage blocked; the checkbox still works for this page load
     }
   }
 
   function setupAdvancedSearch() {
     const keywords = document.getElementById('ad-search-key');
-    const form = keywords && keywords.form;
+    const form = keywords?.form;
     if (!form || document.getElementById(CHECKBOX_ID)) {
       return;
     }
@@ -142,10 +140,16 @@
 
   run();
 
-  // Re-run when Audible swaps content in place; debounced, and run() is idempotent
-  let timer = null;
+  // Re-run at most every 200 ms while Audible changes the page; run() is idempotent.
+  // A throttle, not a debounce, so pages that never stop mutating still get filtered.
+  let pending = false;
   new MutationObserver(() => {
-    clearTimeout(timer);
-    timer = setTimeout(run, 200);
+    if (!pending) {
+      pending = true;
+      setTimeout(() => {
+        pending = false;
+        run();
+      }, 200);
+    }
   }).observe(document.body, { childList: true, subtree: true });
 })();
