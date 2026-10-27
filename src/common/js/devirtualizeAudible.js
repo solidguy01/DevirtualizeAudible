@@ -20,21 +20,8 @@
   const PREF_KEY = 'devirtualizer.excludeAiNarrated';
   const SUMMARY_ID = 'devirtualizer-summary';
   const CHECKBOX_ID = 'devirtualizer-exclude';
-  // Fallback depth from .narratorLabel to its result card (Audible DOM, Oct 2026)
-  const CARD_DEPTH = 9;
 
   let titlesRemoved = 0;
-
-  function findCard(label) {
-    let card = label.closest('li.productListItem');
-    if (!card) {
-      card = label;
-      for (let i = 0; i < CARD_DEPTH && card; i++) {
-        card = card.parentElement;
-      }
-    }
-    return card?.nodeName === 'LI' && card.parentElement?.nodeName === 'UL' ? card : null;
-  }
 
   function updateSummary() {
     if (!titlesRemoved) {
@@ -62,20 +49,12 @@
 
   function filterResults() {
     for (const label of document.querySelectorAll('.narratorLabel')) {
-      const card = findCard(label);
-      if (!card || card.dataset.devirtualizer) {
-        continue;
-      }
+      // .narratorLabel is itself an li, so select the result card by class
+      const card = label.closest('li.productListItem');
       const match = label.textContent.replace(/\s+/g, ' ').trim().match(/^Narrated by:\s*(\S.*)/i);
-      if (!match) {
-        // Label or narrator name not rendered yet; check again on the next run
-        continue;
-      }
-      if (AI_NARRATOR_PATTERNS.some((re) => re.test(match[1]))) {
+      if (card && match && AI_NARRATOR_PATTERNS.some((re) => re.test(match[1]))) {
         card.remove();
         titlesRemoved++;
-      } else {
-        card.dataset.devirtualizer = 'kept';
       }
     }
     updateSummary();
@@ -112,14 +91,9 @@
     checkbox.addEventListener('change', () => writePref(checkbox.checked));
 
     const label = document.createElement('label');
-    label.htmlFor = CHECKBOX_ID;
-    label.style.marginLeft = '0.4em';
-    label.textContent = 'Exclude AI-narrated titles';
-
-    const wrapper = document.createElement('div');
-    wrapper.style.marginTop = '0.4em';
-    wrapper.append(checkbox, label);
-    keywords.parentElement.after(wrapper);
+    label.style.display = 'block';
+    label.append(checkbox, ' Exclude AI-narrated titles');
+    keywords.parentElement.after(label);
 
     form.addEventListener('submit', () => {
       if (!checkbox.checked) {

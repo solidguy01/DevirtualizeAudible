@@ -9,10 +9,6 @@
     "48": "icons/Devirtualizer.png"
   },
 
-  "action": {
-    "default_icon": "icons/Devirtualizer.png",
-    "default_popup": "html/Devirtualizer.html"
-  },
   "content_scripts": [
     {
       "matches": ["*://*.audible.com/*"],

@@ -14,17 +14,14 @@ actual audiobooks amongst the growing virtual horde.
 ## Features
 
 * Removes titles narrated by "Virtual Voice", "AI Voice", "AI Narrator", "Synthesized Voice" or `<name>'s voice
-  replica` from any audible.com page that shows result cards: search (`/search`, including category listings at
-  `/search?node=...`), new releases (`/newreleases`), bestsellers (`/charts/best`) and series pages (`/series/...`).
-  See [docs/01-page-coverage.md](docs/01-page-coverage.md).
-* Shows a single "N VIRTUAL VOICE TITLE(S) REMOVED BY DEVIRTUALIZER" line under the result count, and keeps it up to
-  date if Audible loads more results in place.
+  replica` from audible.com result listings. See [docs/01-page-coverage.md](docs/01-page-coverage.md) for the pages.
+* Shows a single "N VIRTUAL VOICE TITLE(S) REMOVED BY DEVIRTUALIZER" line under the result count.
 * Advanced search (`/advsr`): adds an "Exclude AI-narrated titles" checkbox (checked by default) under the Keyword
-  field. When checked, `-virtual_voice` is added to the keywords on submit, so Audible filters on its side and result
-  pages stay full. The checkbox state is remembered in audible.com's localStorage.
+  field. When checked, `-virtual_voice` is added to the keywords on submit so Audible leaves most AI-narrated titles
+  out and result pages stay fuller; the extension still filters whatever gets through. The checkbox state is
+  remembered in audible.com's localStorage.
 * Add `devirtualize=no` to any Audible URL (for example `/search?keywords=litrpg&devirtualize=no`) to turn the
   extension off for that page.
-* Requests no extension permissions and makes no network calls.
 
 ## Install unpacked
 
@@ -101,7 +98,7 @@ Prebuilt: [downloads/DevirtualizeAudible-ff-1.1.0.zip](downloads/DevirtualizeAud
 mkdir -p dist
 cp -R src/chrome dist/
 cp -R src/common/* dist/chrome
-bsdtar -a -cvf dist/chrome.zip LICENSE PRIVACY -C dist/chrome js icons html manifest.json
+bsdtar -a -cvf dist/chrome.zip LICENSE PRIVACY -C dist/chrome js icons manifest.json
 ```
 
 Prebuilt: [downloads/DevirtualizeAudible-chrome-1.1.0.zip](downloads/DevirtualizeAudible-chrome-1.1.0.zip). See "Install unpacked" above.
