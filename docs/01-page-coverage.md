@@ -24,4 +24,4 @@ Clicking "next page" on `/search` does a full page load. The script also watches
 
 ## Advanced search exclusion term
 
-The checkbox on `/advsr` adds `-virtual_voice` to the keywords. In testing this term excluded every synthetic narration type (Virtual Voice, voice replica, AI Voice, Synthesized Voice), while the alternatives `narrator=-virtual` and `-"virtual voice"` did not. Test details are in `docs/tmp/worklog.md`.
+The checkbox on `/advsr` adds `-virtual_voice` to the keywords. In testing this term excluded the synthetic narration types tested (Virtual Voice, voice replica, AI Voice, Synthesized Voice), while the alternatives `narrator=-virtual` and `-"virtual voice"` did not. "AI Narrator" was not tested on its own. Test details are in `docs/tmp/worklog.md`.

@@ -66,9 +66,9 @@
       if (!card || card.dataset.devirtualizer) {
         continue;
       }
-      const match = label.textContent.replace(/\s+/g, ' ').trim().match(/^Narrated by:\s*(.*)/i);
+      const match = label.textContent.replace(/\s+/g, ' ').trim().match(/^Narrated by:\s*(\S.*)/i);
       if (!match) {
-        // Label not rendered yet; check again on the next run
+        // Label or narrator name not rendered yet; check again on the next run
         continue;
       }
       if (AI_NARRATOR_PATTERNS.some((re) => re.test(match[1]))) {
