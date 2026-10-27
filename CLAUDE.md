@@ -14,13 +14,13 @@ Browser extension (Firefox + Chrome/Edge) that removes AI/synthetic-narrated tit
 - A packaged extension = browser-specific dir + `src/common/*` merged into one folder (see build commands).
 
 Content script behavior (`src/common/js/devirtualizeAudible.js`):
-- Runs on `*://*.audible.com/*` but only acts when the path is `/newreleases` or `/search`.
-- Skipped when the URL has `?devirtualize=no`.
-- Finds elements with class `narratorLabel`, matches text against `^Narrated by:` regexes, then walks up exactly 9 `parentElement` levels to the result card and removes it only if its parent is a `UL` (sanity check).
-- Appends a struck-through "N VIRTUAL VOICE TITLE(S) REMOVED BY DEVIRTUALIZER" message to the first `.resultsSummarySubheading` `SPAN`.
-- Fragile by design: tied to Audible's DOM structure and class names. If filtering stops working, Audible markup changed — check the parent depth and class names first.
-
-To add a new narrator pattern, add another `||` regex clause in the `if` condition.
+- Runs on every `*.audible.com` page; acts only where `.narratorLabel` sits inside a result card. Whole script is skipped when the URL has `?devirtualize=no`.
+- Narrator text after "Narrated by:" is tested against `AI_NARRATOR_PATTERNS` (add new patterns there).
+- Card = `label.closest('li.productListItem')`, falling back to a 9-level `parentElement` walk; removed only if the card's parent is a `UL`. Note `.narratorLabel` is itself an `li` in a nested metadata `ul`, so a bare `closest('li')` is wrong.
+- Idempotent: kept cards get `data-devirtualizer="kept"`, removals add to a running count shown in one `#devirtualizer-summary` element under `.resultsSummarySubheading`. A debounced `MutationObserver` on `document.body` re-runs everything; the summary is written only when its text changes to avoid an observer loop.
+- `/advsr`: injects an "Exclude AI-narrated titles" checkbox under `#ad-search-key`; on submit it appends `-virtual_voice` to the keywords (once). State is in the page's `localStorage` (`devirtualizer.excludeAiNarrated`).
+- Hard constraint: no extension permissions, no network calls; `PRIVACY` (shipped in the zips) must stay accurate.
+- Tied to Audible's DOM and class names. Page coverage and the exclusion-term test results are in `docs/01-page-coverage.md`; issue history in `docs/tmp/worklog.md`.
 
 ## Build
 
