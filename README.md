@@ -10,6 +10,30 @@ results and removes the ones which are "narrated" by a "Virtual Voice". This may
 results if the entire page was "narrated" by "Virtual Voice" titles. Just go on to the next page and see one or two
 actual audiobooks amongst the growing virtual horde.
 
+## Features
+
+* Removes titles narrated by "Virtual Voice", "AI Voice", "AI Narrator", "Synthesized Voice" or "&lt;name&gt;'s voice
+  replica" from any audible.com page that shows result cards: search (`/search`, including category listings at
+  `/search?node=...`), new releases (`/newreleases`) and bestsellers (`/charts/best`). See
+  [docs/01-page-coverage.md](docs/01-page-coverage.md).
+* Shows a single "N VIRTUAL VOICE TITLE(S) REMOVED BY DEVIRTUALIZER" line under the result count, and keeps it up to
+  date if Audible loads more results in place.
+* Advanced search (`/advsr`): adds an "Exclude AI-narrated titles" checkbox (checked by default) under the Keyword
+  field. When checked, `-virtual_voice` is added to the keywords on submit, so Audible filters on its side and result
+  pages stay full. The checkbox state is remembered in audible.com's localStorage.
+* Add `devirtualize=no` to any Audible URL (for example `/search?keywords=litrpg&devirtualize=no`) to turn the
+  extension off for that page.
+* Requests no extension permissions and makes no network calls.
+
+## Install unpacked
+
+Build the extension (see BUILD/TEST below) or extract a zip from `downloads/`, then:
+
+* Chrome/Edge: open `chrome://extensions` (or `edge://extensions`), enable "Developer mode", click "Load unpacked"
+  and select the `dist/chrome` folder.
+* Firefox: open `about:debugging`, click "This Firefox", click "Load Temporary Add-on" and select
+  `dist/firefox/manifest.json`. Temporary add-ons are removed when Firefox restarts.
+
 ## Motivation
 
 At the time of this writing (March 2024) here is the sad state of affairs when trying to actually find an audiobook narrated by a human:
@@ -51,6 +75,8 @@ CHROME/EDGE: (1.0.4 published) [https://chromewebstore.google.com/detail/fegkpnd
 * 1.0.2 -- Includes count of elements removed and some basic sanity checks before actions
 * 1.0.3 -- Also filter out "voice replica" titles and allow quick "devirtualize=no" param
 * 1.0.4 -- Also filter out "AI Voice" titles
+* 1.1.0 -- Runs on all result-card pages (adds bestsellers), handles results loaded in place, more reliable card
+  detection, single updating summary line, "Exclude AI-narrated titles" checkbox on advanced search
 
 ## BUILD/TEST
 
@@ -63,7 +89,7 @@ cp -R src/common/* dist/firefox
 bsdtar -a -cvf dist/firefox.zip LICENSE PRIVACY -C `pwd`/dist/firefox/ js icons manifest.json
 ```
 
-Download at [downloads/DevirtualizeAudible-ff-1.0.4.zip](downloads/DevirtualizeAudible-ff-1.0.4.zip) to try out in Developer mode. For Firefox, this means navigating to "about:debugging", clicking "This Firefox", and clicking "Load Temporary Add-on". (This has to be repeated each restart of Firefox until you download it from the official marketplace.)
+Download at [downloads/DevirtualizeAudible-ff-1.1.0.zip](downloads/DevirtualizeAudible-ff-1.1.0.zip) to try out in Developer mode. For Firefox, this means navigating to "about:debugging", clicking "This Firefox", and clicking "Load Temporary Add-on". (This has to be repeated each restart of Firefox until you download it from the official marketplace.)
 
 ### Chrome/Edge
 
@@ -74,4 +100,4 @@ cp -R src/common/* dist/chrome
 bsdtar -a -cvf dist/chrome.zip LICENSE PRIVACY -C `pwd`/dist/chrome/ js icons html manifest.json
 ```
 
-Download at [downloads/DevirtualizeAudible-chrome-1.0.4.zip](downloads/DevirtualizeAudible-chrome-1.0.4.zip) to try out in Developer mode. For Edge, this means extracting the ZIP to a folder, navigating to "edge://extensions", selecting the "Developer mode" slider, and clicking "Load unpacked" and selecting the folder containing the extension files. (This will generate a warning on each restart of Edge until you can download it from the official marketplace.)
+Download at [downloads/DevirtualizeAudible-chrome-1.1.0.zip](downloads/DevirtualizeAudible-chrome-1.1.0.zip) to try out in Developer mode. For Edge, this means extracting the ZIP to a folder, navigating to "edge://extensions", selecting the "Developer mode" slider, and clicking "Load unpacked" and selecting the folder containing the extension files. (This will generate a warning on each restart of Edge until you can download it from the official marketplace.)

@@ -1,3 +1,6 @@
 Without being able to match the hostname, the plugin cannot only apply to
-audible.com and might fire in error on other websites. No data is stored
-or transmitted whatsoever.
+audible.com and might fire in error on other websites. No data is
+transmitted whatsoever. The only thing stored is the on/off state of the
+"Exclude AI-narrated titles" checkbox on Audible's advanced search page,
+kept in audible.com's own localStorage in your browser. The extension
+requests no permissions and uses no extension storage.
