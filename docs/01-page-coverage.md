@@ -1,6 +1,6 @@
 # Page coverage
 
-The content script runs on every `*.audible.com` page but only removes result cards (`li.productListItem`) whose `.narratorLabel` names an AI narrator. Checked 2026-10-27 on audible.com (en-US):
+The content script runs on every `*.audible.com` page but only removes result cards (`li.productListItem`) whose `.narratorLabel` names an AI narrator. Checked 2026-10-27 on audible.com (en-US). audible.co.uk, audible.ca, audible.com.au and audible.in use the same markup and "Narrated by:" text (checked 2026-10-28 with `ipRedirectOverride=true`, which stops Audible redirecting to the store for your location):
 
 | Page | Filtered | Notes |
 |---|---|---|

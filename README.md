@@ -14,13 +14,14 @@ actual audiobooks amongst the growing virtual horde.
 ## Features
 
 * Removes titles narrated by "Virtual Voice", "AI Voice", "AI Narrator", "Synthesized Voice", "Digital Voice" or
-  `<name>'s voice replica` from audible.com result listings, also when such a narrator is listed next to a human one.
+  `<name>'s voice replica` from result listings on audible.com, audible.co.uk, audible.ca, audible.com.au and
+  audible.in, also when such a narrator is listed next to a human one.
   See [docs/01-page-coverage.md](docs/01-page-coverage.md) for the pages.
 * Shows a single "N AI-NARRATED TITLE(S) REMOVED BY DEVIRTUALIZER" line under the result count.
 * Advanced search (`/advsr`): adds an "Exclude AI-narrated titles" checkbox (checked by default) under the Keyword
   field. When checked, `-virtual_voice` is added to the keywords on submit so Audible leaves most AI-narrated titles
   out and result pages stay fuller; the extension still filters whatever gets through. The checkbox state is
-  remembered in audible.com's localStorage.
+  remembered in that Audible site's localStorage.
 * Add `devirtualize=no` to any Audible URL (for example `/search?keywords=litrpg&devirtualize=no`) to turn the
   extension off for that page.
 

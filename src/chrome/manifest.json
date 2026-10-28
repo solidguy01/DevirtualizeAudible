@@ -11,7 +11,13 @@
 
   "content_scripts": [
     {
-      "matches": ["*://*.audible.com/*"],
+      "matches": [
+        "*://*.audible.com/*",
+        "*://*.audible.co.uk/*",
+        "*://*.audible.ca/*",
+        "*://*.audible.com.au/*",
+        "*://*.audible.in/*"
+      ],
       "js": ["js/devirtualizeAudible.js"]
     }
   ]

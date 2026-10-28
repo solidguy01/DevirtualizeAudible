@@ -1,6 +1,7 @@
-The extension runs only on audible.com pages (host match *://*.audible.com/*)
-and requests no permissions. It makes no network requests and transmits no
-data. The only thing stored is the on/off state of the "Exclude AI-narrated
-titles" checkbox on Audible's advanced search page, kept in audible.com's own
-localStorage in your browser. When that checkbox is on, the term
--virtual_voice is added to the search keywords you submit to Audible.
+The extension runs only on Audible pages (audible.com, audible.co.uk,
+audible.ca, audible.com.au and audible.in) and requests no permissions. It
+makes no network requests and transmits no data. The only thing stored is
+the on/off state of the "Exclude AI-narrated titles" checkbox on Audible's
+advanced search page, kept in that Audible site's own localStorage in your
+browser. When that checkbox is on, the term -virtual_voice is added to the
+search keywords you submit to Audible.
