@@ -91,8 +91,20 @@ This creates `dist/chrome/` and `dist/firefox/` (load unpacked, see above) and `
 `dist/firefox.zip`. The source manifests carry the placeholder version `0.0.0`; `VERSION=1.2.3 ./build.sh` injects a
 real one.
 
-The GitHub Actions workflow runs the same script on every pull request and push to `main` and uploads both builds as
-artifacts.
+End-to-end tests load both builds in Chromium and Firefox (Playwright) on small fixture pages served at audible.com
+URLs, so no live Audible traffic is involved. They run in the Docker Hardened Images Playwright container
+(`docker login dhi.io` once); use the tag that matches `@playwright/test` in `package.json`:
+
+```
+./build.sh
+docker run --rm --init --ipc=host -v "$(pwd)":/work -w /work dhi.io/playwright:1.64.1-debian13-dev \
+  bash -lc 'npm ci && npx playwright test'
+```
+
+`npm run lint` runs `web-ext lint` on the Firefox build.
+
+The GitHub Actions workflow runs the same script on every pull request and push to `main`, lints the Firefox build,
+uploads both builds as artifacts and runs the end-to-end tests.
 
 Pull requests are squash-merged, so the PR title becomes the commit on `main` and must follow
 [Conventional Commits](https://www.conventionalcommits.org/) (checked in CI). The PR title decides the next version:
