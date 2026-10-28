@@ -22,7 +22,7 @@ const settle = (page) => page.waitForTimeout(500);
 test.describe('result filtering', () => {
   test('removes AI-narrated cards and shows one summary line', async ({ page }) => {
     await page.goto(SEARCH);
-    await expect(page.locator(SUMMARY)).toHaveText(/^5 .* REMOVED BY DEVIRTUALIZER$/);
+    await expect(page.locator(SUMMARY)).toHaveText('7 AI-NARRATED TITLE(S) REMOVED BY DEVIRTUALIZER');
     await expect(page.locator(CARDS)).toHaveCount(2);
     await expect(page.locator('#results h3')).toHaveText(['Human', 'Pre-order']);
     await expect(page.locator(SUMMARY)).toHaveCount(1);
@@ -33,7 +33,7 @@ test.describe('result filtering', () => {
     await expect(page.locator(CARDS)).toHaveCount(2);
     await addCard(page, 'Narrated by: Virtual Voice');
     await addCard(page, 'Narrated by: John Roe');
-    await expect(page.locator(SUMMARY)).toHaveText(/^6 /);
+    await expect(page.locator(SUMMARY)).toHaveText(/^8 /);
     await expect(page.locator(CARDS)).toHaveCount(3);
   });
 
@@ -47,7 +47,7 @@ test.describe('result filtering', () => {
       label.textContent = 'Narrated by: AI Voice Ed';
     });
     await expect(page.locator(CARDS)).toHaveCount(2);
-    await expect(page.locator(SUMMARY)).toHaveText(/^6 /);
+    await expect(page.locator(SUMMARY)).toHaveText(/^8 /);
   });
 
   test('stops mutating the page once filtered', async ({ page }) => {
@@ -72,7 +72,7 @@ test.describe('result filtering', () => {
     test(`does nothing with ${url.slice(url.indexOf('?'))}`, async ({ page }) => {
       await page.goto(url);
       await settle(page);
-      await expect(page.locator(CARDS)).toHaveCount(7);
+      await expect(page.locator(CARDS)).toHaveCount(9);
       await expect(page.locator(SUMMARY)).toHaveCount(0);
     });
   }

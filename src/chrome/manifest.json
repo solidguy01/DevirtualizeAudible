@@ -6,7 +6,7 @@
   "description": "Removes AI-narrated titles (Virtual Voice, AI Voice, voice replica and similar) from Audible listings.",
 
   "icons": {
-    "48": "icons/Devirtualizer.png"
+    "128": "icons/Devirtualizer.png"
   },
 
   "content_scripts": [

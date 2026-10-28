@@ -6,13 +6,14 @@
     return;
   }
 
-  // Matched against the narrator text after the "Narrated by:" prefix
+  // Matched against each comma-separated name after the "Narrated by:" prefix
   const AI_NARRATOR_PATTERNS = [
     /^Virtual Voice/i,
     /^AI Voice/i,
     /^AI Narrator/i,
     /^Synthesized Voice/i,
     /voice replica/i,
+    /digital(ized)? voice/i,
   ];
 
   // Search term that makes Audible exclude synthetic narrations server-side
@@ -40,7 +41,7 @@
     if (summary.parentElement !== target) {
       target.appendChild(summary);
     }
-    const text = `${titlesRemoved} VIRTUAL VOICE TITLE(S) REMOVED BY DEVIRTUALIZER`;
+    const text = `${titlesRemoved} AI-NARRATED TITLE(S) REMOVED BY DEVIRTUALIZER`;
     // Only write on change, otherwise the observer would retrigger forever
     if (summary.firstChild.textContent !== text) {
       summary.firstChild.textContent = text;
@@ -52,7 +53,8 @@
       // .narratorLabel is itself an li, so select the result card by class
       const card = label.closest('li.productListItem');
       const match = label.textContent.replace(/\s+/g, ' ').trim().match(/^Narrated by:\s*(\S.*)/i);
-      if (card && match && AI_NARRATOR_PATTERNS.some((re) => re.test(match[1]))) {
+      const names = match ? match[1].split(',').map((name) => name.trim()) : [];
+      if (card && names.some((name) => AI_NARRATOR_PATTERNS.some((re) => re.test(name)))) {
         card.remove();
         titlesRemoved++;
       }
