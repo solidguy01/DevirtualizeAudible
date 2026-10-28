@@ -13,9 +13,10 @@ actual audiobooks amongst the growing virtual horde.
 
 ## Features
 
-* Removes titles narrated by "Virtual Voice", "AI Voice", "AI Narrator", "Synthesized Voice" or `<name>'s voice
-  replica` from audible.com result listings. See [docs/01-page-coverage.md](docs/01-page-coverage.md) for the pages.
-* Shows a single "N VIRTUAL VOICE TITLE(S) REMOVED BY DEVIRTUALIZER" line under the result count.
+* Removes titles narrated by "Virtual Voice", "AI Voice", "AI Narrator", "Synthesized Voice", "Digital Voice" or
+  `<name>'s voice replica` from audible.com result listings, also when such a narrator is listed next to a human one.
+  See [docs/01-page-coverage.md](docs/01-page-coverage.md) for the pages.
+* Shows a single "N AI-NARRATED TITLE(S) REMOVED BY DEVIRTUALIZER" line under the result count.
 * Advanced search (`/advsr`): adds an "Exclude AI-narrated titles" checkbox (checked by default) under the Keyword
   field. When checked, `-virtual_voice` is added to the keywords on submit so Audible leaves most AI-narrated titles
   out and result pages stay fuller; the extension still filters whatever gets through. The checkbox state is
@@ -42,6 +43,9 @@ At the time of this writing (March 2024) here is the sad state of affairs when t
 * Of the latest 100 new titles in romance, only 19 are narrated by actual human beings
 * Of the latest 100 new titles in genre fiction, only 15 are narrated by actual human beings
 * Of the latest **200** new titles in literature and fiction, only 27 (out of **200**) are narrated by actual human beings
+
+Update October 2026: of the latest 100 new titles in mystery, thriller and suspense, 69 are narrated by humans and 31
+by Virtual Voice.
 
 I just got tired and tired of having to scroll through all of this garbage being shoveled onto us.
 
