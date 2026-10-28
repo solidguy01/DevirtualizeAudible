@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
   "name": "DevirtualizeAudible",
-  "version": "1.0.4",
+  "version": "0.0.0",
 
-  "description": "Removes 'Virtual Voice' narrations from product listings at Audible.",
+  "description": "Removes AI-narrated titles (Virtual Voice, AI Voice, voice replica and similar) from Audible listings.",
 
   "icons": {
     "48": "icons/Devirtualizer.png"
