@@ -1,6 +1,6 @@
 # Page coverage
 
-The content script runs on every `*.audible.com` page but only removes result cards (`li.productListItem`) whose `.narratorLabel` names an AI narrator. Checked 2026-10-27 on audible.com (en-US). audible.co.uk, audible.ca, audible.com.au and audible.in use the same markup and "Narrated by:" text (checked 2026-10-28 with `ipRedirectOverride=true`, which stops Audible redirecting to the store for your location):
+The content script runs on every page of the supported Audible sites but only hides result cards (`li.productListItem`) whose `.narratorLabel` names an AI narrator. Checked 2026-10-27 on audible.com (en-US). audible.co.uk, audible.ca, audible.com.au and audible.in use the same markup and "Narrated by:" text (checked 2026-10-28 with `ipRedirectOverride=true`, which stops Audible redirecting to the store for your location):
 
 | Page | Filtered | Notes |
 |---|---|---|
@@ -13,6 +13,6 @@ The content script runs on every `*.audible.com` page but only removes result ca
 | `/pd/<title>/<ASIN>` | No | No narrator labels |
 | `/advsr` | n/a | Gets the "Exclude AI-narrated titles" checkbox |
 
-Paging and sorting on `/search` are full page loads. Cards without a narrator line (pre-orders, some podcasts) are never removed.
+Paging and sorting on `/search` are full page loads. Cards without a narrator line (pre-orders, some podcasts) are never hidden.
 
 The `-virtual_voice` term used by the `/advsr` checkbox was tested to exclude Virtual Voice, voice replica, AI Voice, AI Narrator, Synthesized Voice and Digital Voice titles (2026-10-28). The alternatives `narrator=-virtual` (misses voice replicas) and `-"virtual voice"` (returns only AI titles) do not work.

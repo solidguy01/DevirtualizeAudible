@@ -18,34 +18,72 @@
 
   // Search term that makes Audible exclude synthetic narrations server-side
   const EXCLUDE_TERM = '-virtual_voice';
-  const PREF_KEY = 'devirtualizer.excludeAiNarrated';
+  const EXCLUDE_PREF = 'devirtualizer.excludeAiNarrated';
+  const SHOW_PREF = 'devirtualizer.showHidden';
   const SUMMARY_ID = 'devirtualizer-summary';
   const CHECKBOX_ID = 'devirtualizer-exclude';
+  // Marks AI cards; they are hidden or dimmed, not removed, so "Show" can bring them back
+  const MARK = 'data-devirtualizer';
+  const AI_CARDS = `li.productListItem[${MARK}="ai"]`;
 
-  let titlesRemoved = 0;
+  function readPref(key, fallback) {
+    try {
+      const value = localStorage.getItem(key);
+      return value === null ? fallback : value === 'true';
+    } catch {
+      return fallback;
+    }
+  }
+
+  function writePref(key, value) {
+    try {
+      localStorage.setItem(key, String(value));
+    } catch {
+      // Storage blocked; the setting still works for this page load
+    }
+  }
+
+  // Only write on change, otherwise the observer would retrigger forever
+  function setText(node, text) {
+    if (node.textContent !== text) {
+      node.textContent = text;
+    }
+  }
+
+  function applyVisibility() {
+    const show = readPref(SHOW_PREF, false);
+    for (const card of document.querySelectorAll(AI_CARDS)) {
+      card.style.display = show ? '' : 'none';
+      card.style.opacity = show ? '0.4' : '';
+    }
+  }
 
   function updateSummary() {
-    if (!titlesRemoved) {
-      return;
-    }
+    const count = document.querySelectorAll(AI_CARDS).length;
     const target = document.querySelector('.resultsSummarySubheading');
-    if (!target) {
+    if (!count || !target) {
+      document.getElementById(SUMMARY_ID)?.remove();
       return;
     }
     let summary = document.getElementById(SUMMARY_ID);
     if (!summary) {
       summary = document.createElement('p');
       summary.id = SUMMARY_ID;
-      summary.appendChild(document.createElement('strike'));
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.style.marginLeft = '0.5em';
+      toggle.addEventListener('click', () => {
+        writePref(SHOW_PREF, !readPref(SHOW_PREF, false));
+        applyVisibility();
+        updateSummary();
+      });
+      summary.append(document.createElement('strike'), toggle);
     }
     if (summary.parentElement !== target) {
       target.appendChild(summary);
     }
-    const text = `${titlesRemoved} AI-NARRATED TITLE(S) REMOVED BY DEVIRTUALIZER`;
-    // Only write on change, otherwise the observer would retrigger forever
-    if (summary.firstChild.textContent !== text) {
-      summary.firstChild.textContent = text;
-    }
+    setText(summary.firstChild, `${count} AI-NARRATED TITLE(S) FILTERED BY DEVIRTUALIZER`);
+    setText(summary.lastChild, readPref(SHOW_PREF, false) ? 'Hide' : 'Show');
   }
 
   function filterResults() {
@@ -54,28 +92,19 @@
       const card = label.closest('li.productListItem');
       const match = label.textContent.replace(/\s+/g, ' ').trim().match(/^Narrated by:\s*(\S.*)/i);
       const names = match ? match[1].split(',').map((name) => name.trim()) : [];
-      if (card && names.some((name) => AI_NARRATOR_PATTERNS.some((re) => re.test(name)))) {
-        card.remove();
-        titlesRemoved++;
+      if (!card) {
+        continue;
+      }
+      if (names.some((name) => AI_NARRATOR_PATTERNS.some((re) => re.test(name)))) {
+        card.setAttribute(MARK, 'ai');
+      } else if (card.hasAttribute(MARK)) {
+        // Card node reused for a human-narrated title
+        card.removeAttribute(MARK);
+        card.style.display = card.style.opacity = '';
       }
     }
+    applyVisibility();
     updateSummary();
-  }
-
-  function readPref() {
-    try {
-      return localStorage.getItem(PREF_KEY) !== 'false';
-    } catch {
-      return true;
-    }
-  }
-
-  function writePref(value) {
-    try {
-      localStorage.setItem(PREF_KEY, String(value));
-    } catch {
-      // Storage blocked; the checkbox still works for this page load
-    }
   }
 
   function setupAdvancedSearch() {
@@ -89,8 +118,8 @@
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.id = CHECKBOX_ID;
-    checkbox.checked = readPref();
-    checkbox.addEventListener('change', () => writePref(checkbox.checked));
+    checkbox.checked = readPref(EXCLUDE_PREF, true);
+    checkbox.addEventListener('change', () => writePref(EXCLUDE_PREF, checkbox.checked));
 
     const label = document.createElement('label');
     label.style.display = 'block';

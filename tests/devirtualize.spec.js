@@ -2,7 +2,9 @@ const { test, expect } = require('./fixtures');
 
 const SEARCH = 'https://www.audible.com/search?keywords=werewolf';
 const ADVSR = 'https://www.audible.com/advsr';
-const CARDS = 'li.productListItem';
+// Hidden AI cards stay in the DOM, so count only visible ones
+const CARDS = 'li.productListItem:visible';
+const AI_CARDS = 'li.productListItem[data-devirtualizer="ai"]';
 const SUMMARY = '#devirtualizer-summary';
 
 // Runs in the page's main world; the DOM is shared with the content script
@@ -20,11 +22,11 @@ function addCard(page, narratorLabel) {
 const settle = (page) => page.waitForTimeout(500);
 
 test.describe('result filtering', () => {
-  test('removes AI-narrated cards and shows one summary line', async ({ page }) => {
+  test('hides AI-narrated cards and shows one summary line', async ({ page }) => {
     await page.goto(SEARCH);
-    await expect(page.locator(SUMMARY)).toHaveText('7 AI-NARRATED TITLE(S) REMOVED BY DEVIRTUALIZER');
+    await expect(page.locator(SUMMARY)).toContainText('7 AI-NARRATED TITLE(S) FILTERED BY DEVIRTUALIZER');
     await expect(page.locator(CARDS)).toHaveCount(2);
-    await expect(page.locator('#results h3')).toHaveText(['Human', 'Pre-order']);
+    await expect(page.locator(`${CARDS} h3`)).toHaveText(['Human', 'Pre-order']);
     await expect(page.locator(SUMMARY)).toHaveCount(1);
   });
 
@@ -90,6 +92,48 @@ test.describe('result filtering', () => {
       await expect(page.locator(SUMMARY)).toHaveCount(0);
     });
   }
+});
+
+test.describe('show/hide toggle', () => {
+  const toggle = (page) => page.locator(`${SUMMARY} button`);
+
+  test('hides by default, shows dimmed on click and remembers it', async ({ page }) => {
+    await page.goto(SEARCH);
+    await expect(toggle(page)).toHaveText('Show');
+    await expect(page.locator(CARDS)).toHaveCount(2);
+    await toggle(page).click();
+    await expect(toggle(page)).toHaveText('Hide');
+    await expect(page.locator(CARDS)).toHaveCount(9);
+    await expect(page.locator(AI_CARDS).first()).toHaveCSS('opacity', '0.4');
+    await expect(page.locator(SUMMARY)).toContainText('7 AI-NARRATED');
+
+    await page.goto(SEARCH);
+    await expect(toggle(page)).toHaveText('Hide');
+    await expect(page.locator(CARDS)).toHaveCount(9);
+    await toggle(page).click();
+    await expect(toggle(page)).toHaveText('Show');
+    await expect(page.locator(CARDS)).toHaveCount(2);
+  });
+
+  test('applies the current choice to cards added later', async ({ page }) => {
+    await page.goto(SEARCH);
+    await toggle(page).click();
+    await expect(page.locator(CARDS)).toHaveCount(9);
+    await addCard(page, 'Narrated by: Virtual Voice');
+    await expect(page.locator(SUMMARY)).toContainText('8 AI-NARRATED');
+    await expect(page.locator(AI_CARDS).last()).toHaveCSS('opacity', '0.4');
+    await expect(page.locator(CARDS)).toHaveCount(10);
+  });
+
+  test('shows a hidden card again when it is reused for a human narrator', async ({ page }) => {
+    await page.goto(SEARCH);
+    await expect(page.locator(CARDS)).toHaveCount(2);
+    await page.locator(`${AI_CARDS} .narratorLabel`).first().evaluate((label) => {
+      label.textContent = 'Narrated by: John Roe';
+    });
+    await expect(page.locator(CARDS)).toHaveCount(3);
+    await expect(page.locator(SUMMARY)).toContainText('6 AI-NARRATED');
+  });
 });
 
 test.describe('advanced search', () => {
