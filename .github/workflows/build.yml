@@ -5,7 +5,6 @@ on:
     types: [opened, edited, synchronize, reopened]
   push:
     branches: [main]
-    tags: ['v*']
 
 permissions:
   contents: read
@@ -37,8 +36,9 @@ jobs:
           name: devirtualizeaudible-firefox
           path: dist/firefox/
 
+  # Tags and releases v<manifest version> on main unless that release already exists
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -46,10 +46,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          version=$(./build.sh)
-          [ "$GITHUB_REF_NAME" = "v$version" ] || { echo "Tag $GITHUB_REF_NAME does not match manifest version $version"; exit 1; }
-          mv dist/chrome.zip "dist/DevirtualizeAudible-chrome-$GITHUB_REF_NAME.zip"
-          mv dist/firefox.zip "dist/DevirtualizeAudible-firefox-$GITHUB_REF_NAME.zip"
-          gh release create "$GITHUB_REF_NAME" dist/*.zip --generate-notes
+          tag="v$(./build.sh)"
+          if gh release view "$tag" > /dev/null 2>&1; then
+            echo "$tag already released; bump the manifest versions to release"
+            exit 0
+          fi
+          mv dist/chrome.zip "dist/DevirtualizeAudible-chrome-$tag.zip"
+          mv dist/firefox.zip "dist/DevirtualizeAudible-firefox-$tag.zip"
+          gh release create "$tag" dist/*.zip --target "$GITHUB_SHA" --generate-notes
         env:
           GH_TOKEN: ${{ github.token }}

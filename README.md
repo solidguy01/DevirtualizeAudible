@@ -89,9 +89,11 @@ This creates `dist/chrome/` and `dist/firefox/` (load unpacked, see above) and `
 `dist/firefox.zip`.
 
 The GitHub Actions workflow runs the same script on every pull request and push to `main` and uploads both builds as
-artifacts. Pushing a `v*` tag (for example `git tag v1.1.0 && git push origin v1.1.0`) also creates a GitHub Release
-with both zips attached.
+artifacts.
 
 Pull requests are squash-merged, so the PR title becomes the commit on `main` and must follow
 [Conventional Commits](https://www.conventionalcommits.org/) (checked in CI). Both manifests must carry the same
-`MAJOR.MINOR.PATCH` version, and a release tag must equal `v<version>`.
+`MAJOR.MINOR.PATCH` version.
+
+Releases are created by CI: on a push to `main`, if there is no release `v<version>` yet, the workflow tags that
+commit and publishes a GitHub Release with both zips. To release, bump the version in both manifests in the PR.
