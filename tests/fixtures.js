@@ -82,9 +82,9 @@ exports.expect = expect;
 exports.test = base.extend({
   context: async ({}, use, testInfo) => {
     const { context, close } = testInfo.project.name === 'firefox' ? await launchFirefox() : await launchChromium();
-    // Every www.audible.com request gets tests/pages/<path>.html, so the content script's
-    // *://*.audible.com/* match fires without live traffic
-    await context.route('https://www.audible.com/**', (route) => {
+    // Every www.audible.* request gets tests/pages/<path>.html, so the content script's
+    // host matches fire without live traffic
+    await context.route(/^https:\/\/www\.audible\.[a-z.]+\//, (route) => {
       const file = path.join(PAGES, `${new URL(route.request().url()).pathname.slice(1)}.html`);
       route.fulfill(fs.existsSync(file) ? { contentType: 'text/html', path: file } : { status: 404 });
     });

@@ -68,6 +68,20 @@ test.describe('result filtering', () => {
     expect(mutations).toBe(0);
   });
 
+  for (const host of ['www.audible.co.uk', 'www.audible.ca', 'www.audible.com.au', 'www.audible.in']) {
+    test(`filters on ${host}`, async ({ page }) => {
+      await page.goto(`https://${host}/search?keywords=werewolf`);
+      await expect(page.locator(SUMMARY)).toHaveText(/^7 /);
+      await expect(page.locator(CARDS)).toHaveCount(2);
+    });
+  }
+
+  test('does nothing on Audible stores it does not support', async ({ page }) => {
+    await page.goto('https://www.audible.de/search?keywords=werewolf');
+    await settle(page);
+    await expect(page.locator(CARDS)).toHaveCount(9);
+  });
+
   for (const url of ['https://www.audible.com/search?devirtualize=no', `${SEARCH}&devirtualize=no`]) {
     test(`does nothing with ${url.slice(url.indexOf('?'))}`, async ({ page }) => {
       await page.goto(url);
