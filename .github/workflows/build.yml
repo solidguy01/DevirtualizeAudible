@@ -36,21 +36,26 @@ jobs:
           name: devirtualizeaudible-firefox
           path: dist/firefox/
 
-  # Tags and releases v<manifest version> on main unless that release already exists
+  # Derives the version from commits since the last tag, injects it, tags and releases
   release:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
+    concurrency: release
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - run: |
-          tag="v$(./build.sh)"
-          if gh release view "$tag" > /dev/null 2>&1; then
-            echo "$tag already released; bump the manifest versions to release"
+          version=$(./next-version.sh)
+          if [ -z "$version" ]; then
+            echo "No feat, fix, perf or breaking commits since the last release"
             exit 0
           fi
+          VERSION="$version" ./build.sh
+          tag="v$version"
           mv dist/chrome.zip "dist/DevirtualizeAudible-chrome-$tag.zip"
           mv dist/firefox.zip "dist/DevirtualizeAudible-firefox-$tag.zip"
           gh release create "$tag" dist/*.zip --target "$GITHUB_SHA" --generate-notes

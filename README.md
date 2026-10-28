@@ -79,6 +79,8 @@ CHROME/EDGE: (1.0.4 published) [https://chromewebstore.google.com/detail/fegkpnd
 * 1.1.0 -- Runs on all result-card pages (adds bestsellers), handles results loaded in place, more reliable card
   detection, single updating summary line, "Exclude AI-narrated titles" checkbox on advanced search
 
+Later versions: see GitHub Releases.
+
 ## BUILD/TEST
 
 ```
@@ -86,14 +88,14 @@ CHROME/EDGE: (1.0.4 published) [https://chromewebstore.google.com/detail/fegkpnd
 ```
 
 This creates `dist/chrome/` and `dist/firefox/` (load unpacked, see above) and `dist/chrome.zip` and
-`dist/firefox.zip`.
+`dist/firefox.zip`. The source manifests carry the placeholder version `0.0.0`; `VERSION=1.2.3 ./build.sh` injects a
+real one.
 
 The GitHub Actions workflow runs the same script on every pull request and push to `main` and uploads both builds as
 artifacts.
 
 Pull requests are squash-merged, so the PR title becomes the commit on `main` and must follow
-[Conventional Commits](https://www.conventionalcommits.org/) (checked in CI). Both manifests must carry the same
-`MAJOR.MINOR.PATCH` version.
-
-Releases are created by CI: on a push to `main`, if there is no release `v<version>` yet, the workflow tags that
-commit and publishes a GitHub Release with both zips. To release, bump the version in both manifests in the PR.
+[Conventional Commits](https://www.conventionalcommits.org/) (checked in CI). The PR title decides the next version:
+a breaking change (`!` or `BREAKING CHANGE:`) bumps major, `feat` minor, `fix` or `perf` patch; other types do not
+release. On each push to `main`, CI runs `./next-version.sh` (run it locally to preview), builds with that version,
+tags `v<version>` and publishes a GitHub Release with both zips.
