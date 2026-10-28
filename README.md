@@ -25,8 +25,8 @@ actual audiobooks amongst the growing virtual horde.
 
 ## Install unpacked
 
-Version 1.1.0 is not on the browser stores. Build it (see BUILD/TEST below) or extract a zip from `downloads/` into a
-folder that will stay in place, then:
+Version 1.1.0 is not on the browser stores. Build it (see BUILD/TEST below), or download a zip from the GitHub
+Releases page (or a pull request's build artifacts) and extract it into a folder that will stay in place, then:
 
 * Chrome/Edge: open `chrome://extensions` (or `edge://extensions`), enable "Developer mode", click "Load unpacked"
   and select `dist/chrome` or the folder you extracted the Chrome zip into.
@@ -81,24 +81,13 @@ CHROME/EDGE: (1.0.4 published) [https://chromewebstore.google.com/detail/fegkpnd
 
 ## BUILD/TEST
 
-### Firefox
-
 ```
-mkdir -p dist
-cp -R src/firefox dist/
-cp -R src/common/* dist/firefox
-bsdtar -a -cvf dist/firefox.zip LICENSE PRIVACY -C dist/firefox js icons manifest.json
+./build.sh
 ```
 
-Prebuilt: [downloads/DevirtualizeAudible-ff-1.1.0.zip](downloads/DevirtualizeAudible-ff-1.1.0.zip). See "Install unpacked" above.
+This creates `dist/chrome/` and `dist/firefox/` (load unpacked, see above) and `dist/chrome.zip` and
+`dist/firefox.zip`.
 
-### Chrome/Edge
-
-```
-mkdir -p dist
-cp -R src/chrome dist/
-cp -R src/common/* dist/chrome
-bsdtar -a -cvf dist/chrome.zip LICENSE PRIVACY -C dist/chrome js icons manifest.json
-```
-
-Prebuilt: [downloads/DevirtualizeAudible-chrome-1.1.0.zip](downloads/DevirtualizeAudible-chrome-1.1.0.zip). See "Install unpacked" above.
+The GitHub Actions workflow runs the same script on every pull request and push to `main` and uploads both builds as
+artifacts. Pushing a `v*` tag (for example `git tag v1.1.0 && git push origin v1.1.0`) also creates a GitHub Release
+with both zips attached.
