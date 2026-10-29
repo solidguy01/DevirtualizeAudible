@@ -29,8 +29,9 @@ actual audiobooks amongst the growing virtual horde.
 
 ## Install unpacked
 
-Version 1.1.0 is not on the browser stores. Build it (see BUILD/TEST below), or download a zip from the GitHub
-Releases page (or a pull request's build artifacts) and extract it into a folder that will stay in place, then:
+This fork's releases (1.1.0 and later) are not on the browser stores. Build it (see BUILD/TEST below), or download a
+zip from the GitHub Releases page (or a pull request's build artifacts) and extract it into a folder that will stay
+in place, then:
 
 * Chrome/Edge: open `chrome://extensions` (or `edge://extensions`), enable "Developer mode", click "Load unpacked"
   and select `dist/chrome` or the folder you extracted the Chrome zip into.
@@ -70,11 +71,11 @@ removal message to let you know the search results have been filtered:
 
 ## LINKS
 
-The store listings are the upstream releases (1.0.4). Version 1.1.0 of this fork is only available unpacked.
+The store listings are the upstream releases. This fork's releases (1.1.0 and later) are only available unpacked.
 
 FIREFOX: (1.0.4 published) https://addons.mozilla.org/en-US/firefox/addon/devirtualizeaudible/
 
-CHROME/EDGE: (1.0.4 published) [https://chromewebstore.google.com/detail/fegkpndgbjchmippoedipimhnedijfla/](https://chromewebstore.google.com/detail/devirtualizeaudible/fegkpndgbjchmippoedipimhnedijfla)
+CHROME/EDGE: (1.0.2 published) [https://chromewebstore.google.com/detail/fegkpndgbjchmippoedipimhnedijfla/](https://chromewebstore.google.com/detail/devirtualizeaudible/fegkpndgbjchmippoedipimhnedijfla)
 
 ## VERSION HISTORY
 
